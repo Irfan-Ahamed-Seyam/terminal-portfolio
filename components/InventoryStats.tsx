@@ -20,13 +20,22 @@ export function InventoryStats() {
                             <h3 className="text-sm uppercase text-primary/80 mb-2 font-bold tracking-wider shrink-0">
                                 [{category.replace(/_and_/g, ' & ').replace(/_/g, ' ')}]
                             </h3>
-                            <ul className="flex flex-wrap gap-2">
-                                {items.map((item, i) => (
-                                    <li key={i} className="px-2 py-1 border border-primary/30 text-xs bg-black uppercase tracking-wider hover:bg-primary hover:text-black transition-colors cursor-crosshair">
-                                        {item}
-                                    </li>
+                            <div className="flex flex-col gap-3">
+                                {(items as { group: string, items: string[] }[]).map((subGroup, subIdx) => (
+                                    <div key={subIdx}>
+                                        <div className="text-primary opacity-80 text-xs mb-1 font-bold tracking-widest uppercase">
+                                            &gt; {subGroup.group}:
+                                        </div>
+                                        <ul className="flex flex-wrap gap-2">
+                                            {subGroup.items.map((item, j) => (
+                                                <li key={j} className="px-2 py-1 border border-primary/30 text-xs bg-black uppercase tracking-wider hover:bg-primary hover:text-black transition-colors cursor-crosshair">
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     ))}
                 </div>
