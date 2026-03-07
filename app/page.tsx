@@ -106,6 +106,7 @@ const LsOutput = ({ onExecute }: { onExecute: (cmd: string) => void }) => {
       <InteractiveCommand cmd="cat projects.txt" label="projects.txt" onExecute={onExecute} delay={100} />
       <InteractiveCommand cmd="cat skills.txt" label="skills.txt" onExecute={onExecute} delay={200} />
       <InteractiveCommand cmd="cat certifications.txt" label="certifications.txt" onExecute={onExecute} delay={300} />
+      <InteractiveCommand cmd="cat contacts.txt" label="contacts.txt" onExecute={onExecute} delay={400} />
     </div>
   );
 };
@@ -221,6 +222,29 @@ const CertificationsOutput = () => {
   );
 };
 
+const ContactsOutput = () => {
+  return (
+    <div className="flex flex-col gap-4 mt-2">
+      <div className="text-[#39ff14]/70 mb-2 font-bold"><TypewriterText text="cat contacts.txt [LOADING... OK]" delay={0} speed={5} /></div>
+      <div className="nes-border p-5 bg-[#39ff14]/5 animate-in fade-in duration-500">
+        <ul className="space-y-4">
+          <li className="flex gap-3 flex-col sm:flex-row items-start sm:items-center">
+            <span className="text-[#39ff14] font-bold shrink-0 uppercase tracking-widest">&gt; Email:</span>
+            <a href="mailto:irfanahmed29818@gmail.com" className="text-[#39ff14] opacity-90 hover:opacity-100 hover:text-black hover:bg-[#39ff14] transition-colors border-b border-[#39ff14]/30 pb-0.5">
+              irfanahmed29818@gmail.com
+            </a>
+          </li>
+          <li className="flex gap-3 flex-col sm:flex-row items-start sm:items-center">
+            <span className="text-[#39ff14] font-bold shrink-0 uppercase tracking-widest">&gt; LinkedIn:</span>
+            <a href="https://linkedin.com/in/irfanahamedseyam/" target="_blank" rel="noopener noreferrer" className="text-[#39ff14] opacity-90 hover:opacity-100 hover:text-black hover:bg-[#39ff14] transition-colors border-b border-[#39ff14]/30 pb-0.5">
+              linkedin.com/in/irfanahamedseyam/
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+};
 
 const NeofetchOutput = () => {
   const [stats, setStats] = useState<string[]>([]);
@@ -552,6 +576,8 @@ const executeCommandLogic = (cmdInput: string, onExecute: (cmd: string) => void)
       return <SkillsOutput />;
     } else if (target === "certifications.txt") {
       return <CertificationsOutput />;
+    } else if (target === "contacts.txt") {
+      return <ContactsOutput />;
     } else {
       return <div className="text-red-500 mt-2"><TypewriterText text={`cat: ${target}: No such file or directory`} speed={5} /></div>;
     }
@@ -576,32 +602,74 @@ export default function Home() {
   const [activeSuggestion, setActiveSuggestion] = useState("whoami");
 
   useEffect(() => {
-    // Priority 1: The Happy Path (Highest Priority)
-    const happyPath = [
+    // Primary Sequence Definition
+    const sequence = [
       'whoami',
       'ls',
       'cat skills.txt',
       'cat projects.txt',
-      'cat experience.txt'
+      'cat experience.txt',
+      'cat contacts.txt',
+      'help'
     ];
 
-    for (const cmd of happyPath) {
-      if (!executedCommands.includes(cmd)) {
-        setActiveSuggestion(cmd);
-        return;
-      }
-    }
-
-    // Priority 2: The help Fallback (Medium Priority)
-    const lastCmd = executedCommands.length > 0 ? executedCommands[executedCommands.length - 1] : "";
-    if (lastCmd !== 'help') {
-      setActiveSuggestion('help');
+    if (executedCommands.length === 0) {
+      setActiveSuggestion('whoami');
       return;
     }
 
-    // Priority 3: The Idle Loop (Lowest Priority)
-    const idleSuggestions = ['cat certifications.txt', 'ls'];
-    setActiveSuggestion(idleSuggestions[Math.floor(Math.random() * idleSuggestions.length)]);
+    // Identify consecutive identical commands
+    const lastCmd = executedCommands[executedCommands.length - 1];
+    const secondLastCmd = executedCommands.length > 1 ? executedCommands[executedCommands.length - 2] : null;
+    const isConsecutive = lastCmd === secondLastCmd;
+
+    // Rule: Repetition Handling (The 'Help' Rule)
+    if (lastCmd === 'help' && isConsecutive) {
+      // Clear execution history of the sequence commands to reset the loop
+      setExecutedCommands(prev => prev.filter(c => !sequence.includes(c)));
+      setActiveSuggestion('whoami');
+      return;
+    }
+
+    // Rule: State-Aware Discovery (Require 'ls' before suggesting any 'cat')
+    const hasRunLs = executedCommands.includes('ls');
+    if (!hasRunLs) {
+      // Loop: whoami -> help -> ls (with help at the end, so suggest 'ls' or 'help' if whoami is done)
+      if (!executedCommands.includes('whoami')) {
+        setActiveSuggestion('whoami');
+        return;
+      }
+
+      const preLsSequence = ['whoami', 'ls', 'help'];
+      // Command Lock-out applies here as well
+      const availablePreLs = preLsSequence.filter(cmd => !executedCommands.includes(cmd) && cmd !== lastCmd);
+      if (availablePreLs.length > 0) {
+        // Keep help at the end
+        if (availablePreLs.includes('ls')) setActiveSuggestion('ls');
+        else setActiveSuggestion('help');
+      } else {
+        setActiveSuggestion('help');
+      }
+      return;
+    }
+
+    // Standard Sequence Evaluation with Rule: Command Lock-out
+    // Filter out commands that have been executed, OR the command they just ran (to prevent double suggesting)
+    let availableSuggestions = sequence.filter(cmd => !executedCommands.includes(cmd) && cmd !== lastCmd);
+
+    // Rule: Priority & Positioning
+    // Ensure 'help' is only suggested when it's the absolute last option, or if no other options exist
+    if (availableSuggestions.length > 1 && availableSuggestions.includes('help')) {
+      availableSuggestions = availableSuggestions.filter(cmd => cmd !== 'help');
+    }
+
+    if (availableSuggestions.length > 0) {
+      setActiveSuggestion(availableSuggestions[0]);
+    } else {
+      // Fallback if everything is exhausted
+      setActiveSuggestion('help');
+    }
+
   }, [executedCommands]);
 
   // Dynamic Scroll Alignment
@@ -706,7 +774,7 @@ export default function Home() {
       e.preventDefault();
 
       const commands = ["help", "whoami", "ls", "cat", "clear", "neofetch", "ping", "cmatrix"];
-      const files = ["experience.txt", "projects.txt", "skills.txt", "certifications.txt"];
+      const files = ["experience.txt", "projects.txt", "skills.txt", "certifications.txt", "contacts.txt"];
 
       const parts = currentInput.split(" ");
       let completedText = "";
