@@ -1,26 +1,289 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: #000000;
+  --color-foreground: #39ff14;
+
+  --font-sans: var(--font-vt323), monospace;
+  --font-mono: var(--font-vt323), monospace;
+
+  --color-primary: #39ff14;
+  --color-primary-foreground: #000000;
+
+  --color-secondary: #0a0a0a;
+  --color-secondary-foreground: #39ff14;
+
+  --color-muted: #111111;
+  --color-muted-foreground: #228b22;
+
+  --color-card: #000000;
+  --color-card-foreground: #39ff14;
+
+  --color-popover: #000000;
+  --color-popover-foreground: #39ff14;
+
+  --color-accent: #111111;
+  --color-accent-foreground: #39ff14;
+
+  --color-border: #39ff14;
+  --color-input: #39ff14;
+  --color-ring: #39ff14;
+
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --radius-4xl: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border outline-ring;
+    border-radius: 0 !important;
+  }
+
+  body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: radial-gradient(circle at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+    letter-spacing: 0.05em;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Aggressive Nav Button Hover / Active States */
+.nes-nav-btn {
+  position: relative;
+}
+
+.nes-nav-btn::before {
+  content: "> ";
+  position: absolute;
+  left: 0.5rem;
+  opacity: 0;
+  transition: opacity 0s;
+}
+
+.nes-nav-btn:hover::before,
+.nes-nav-btn[data-active="true"]::before {
+  opacity: 1;
+}
+
+.nes-nav-btn:hover,
+.nes-nav-btn[data-active="true"] {
+  background-color: #39ff14 !important;
+  color: #000 !important;
+  border-color: #39ff14 !important;
+  box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.5) !important;
+  font-weight: bold;
+}
+
+.nes-nav-btn:hover {
+  transform: scale(1.02);
+}
+
+.nes-nav-btn[data-active="true"] {
+  transform: scale(1);
+}
+
+
+/* Aggressive Scrollbar Removal for Chrome, Safari, Opera */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Aggressive Scrollbar Removal for Firefox, IE, Edge */
+html,
+body,
+* {
+  -ms-overflow-style: none !important;
+  /* IE and Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
+}
+
+
+/* CRT Scanlines */
+.crt::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 50;
+  background-size: 100% 3px, 3px 100%;
+  pointer-events: none;
+  opacity: 0.6;
+  animation: scanlines 10s linear infinite;
+}
+
+@keyframes scanlines {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 100vh;
+  }
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.98;
+  }
+
+  5% {
+    opacity: 0.90;
+  }
+
+  10% {
+    opacity: 0.98;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.crt-overlay {
+  animation: flicker 0.2s infinite alternate;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.blink-cursor {
+  display: inline-block;
+  min-width: 10px;
+  height: 1.2em;
+  background-color: transparent;
+  border-bottom: 3px solid #39ff14;
+  vertical-align: middle;
+  animation: blink 0.5s step-end infinite;
+  margin-left: 1px;
+}
+
+/* 8-bit utility classes */
+.nes-border {
+  border: 4px solid #39ff14;
+  position: relative;
+  background-color: black;
+  box-shadow:
+    inset -4px -4px 0px 0px rgba(17, 17, 17, 0.8),
+    inset 4px 4px 0px 0px rgba(100, 255, 100, 0.2);
+}
+
+.nes-text-shadow {
+  text-shadow: 2px 2px 0px #000, 0px 0px 8px #39ff14;
+}
+
+.nes-button {
+  background-color: black;
+  color: #39ff14;
+  border: 4px solid #39ff14;
+  padding: 0.5rem 1rem;
+  text-transform: uppercase;
+  transition: all 0.1s steps(2);
+  cursor: pointer;
+  box-shadow:
+    inset -4px -4px 0px 0px rgba(17, 17, 17, 0.8),
+    inset 4px 4px 0px 0px rgba(100, 255, 100, 0.2);
+}
+
+.nes-button:hover {
+  background-color: #39ff14;
+  color: black;
+  box-shadow:
+    inset -4px -4px 0px 0px rgba(0, 100, 0, 0.5),
+    inset 4px 4px 0px 0px rgba(200, 255, 200, 0.8);
+}
+
+.nes-button:active {
+  box-shadow: inset 4px 4px 0px 0px rgba(17, 17, 17, 0.8);
+  transform: translate(2px, 2px);
+}
+
+@keyframes glitch {
+
+  0%,
+  10%,
+  100% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+    text-shadow: none;
+    opacity: 1;
+  }
+
+  2% {
+    transform: translate(-3px, 1px);
+    clip-path: inset(10% 0 50% 0);
+    text-shadow: 2px 0 red, -2px 0 cyan;
+    opacity: 1;
+  }
+
+  4% {
+    transform: translate(3px, -1px);
+    clip-path: inset(40% 0 20% 0);
+    text-shadow: -2px 0 red, 2px 0 cyan;
+    opacity: 0.5;
+  }
+
+  6% {
+    transform: translate(-2px, 2px);
+    clip-path: inset(80% 0 5% 0);
+    text-shadow: 2px 0 red, -2px 0 cyan;
+    opacity: 1;
+  }
+
+  8% {
+    transform: translate(2px, -2px);
+    clip-path: inset(20% 0 70% 0);
+    text-shadow: -2px 0 red, 2px 0 cyan;
+    opacity: 0;
+  }
+
+  9% {
+    opacity: 1;
+  }
+}
+
+.animate-glitch {
+  animation: glitch 6s infinite;
 }
