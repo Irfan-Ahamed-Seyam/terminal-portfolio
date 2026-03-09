@@ -223,14 +223,30 @@ const CertificationsOutput = () => {
 };
 
 const ContactsOutput = () => {
+  const [showToast, setShowToast] = useState(false);
+
+  const handleEmailClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const email = "irfanahmed29818@gmail.com";
+    navigator.clipboard.writeText(email);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2500);
+    // Still trigger the mailto action after copying
+    window.location.href = `mailto:${email}`;
+  };
+
   return (
-    <div className="flex flex-col gap-4 mt-2">
+    <div className="flex flex-col gap-4 mt-2 relative">
       <div className="text-[#39ff14]/70 mb-2 font-bold"><TypewriterText text="cat contacts.txt [LOADING... OK]" delay={0} speed={5} /></div>
-      <div className="nes-border p-5 bg-[#39ff14]/5 animate-in fade-in duration-500">
+      <div className="nes-border p-5 bg-[#39ff14]/5 animate-in fade-in duration-500 relative">
         <ul className="space-y-4">
           <li className="flex gap-3 flex-col sm:flex-row items-start sm:items-center">
             <span className="text-[#39ff14] font-bold shrink-0 uppercase tracking-widest">&gt; Email:</span>
-            <a href="mailto:irfanahmed29818@gmail.com" className="text-[#39ff14] opacity-90 hover:opacity-100 hover:text-black hover:bg-[#39ff14] transition-colors border-b border-[#39ff14]/30 pb-0.5">
+            <a
+              href="mailto:irfanahmed29818@gmail.com"
+              onClick={handleEmailClick}
+              className="text-[#39ff14] opacity-90 hover:opacity-100 hover:text-black hover:bg-[#39ff14] transition-colors border-b border-[#39ff14]/30 pb-0.5"
+            >
               irfanahmed29818@gmail.com
             </a>
           </li>
@@ -241,6 +257,11 @@ const ContactsOutput = () => {
             </a>
           </li>
         </ul>
+
+        {/* Toast Notification */}
+        <div className={`absolute bottom-2 right-2 sm:bottom-4 sm:right-4 bg-black/90 border border-[#39ff14] text-[#39ff14] px-3 py-2 text-xs uppercase tracking-widest shadow-[0_0_10px_rgba(57,255,20,0.2)] transition-opacity duration-300 z-50 ${showToast ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          [✓] Email copied to clipboard
+        </div>
       </div>
     </div>
   );
