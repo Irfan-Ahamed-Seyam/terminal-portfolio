@@ -54,7 +54,7 @@ export const portfolioData = {
     skills: {
         "INFRASTRUCTURE_&_VIRTUALIZATION": [
             { group: "Active", items: ["Linode", "CloudLinux", "WHM / cPanel", "WP Toolkit", "Linux Server Admin"] },
-            { group: "Familiar", items: ["Docker", "VMware", "WSL2", "Apache / Nginx", "Microsoft 365", "CISCO Packet Tracer"] }
+            { group: "Familiar", items: ["Docker", "Kubernetes (k3s)", "VMware", "ArgoCD", "GitOps", "WSL2", "Apache / Nginx", "Microsoft 365", "CISCO Packet Tracer"] }
         ],
         "NETWORKING_&_SECURITY": [
             { group: "Active", items: ["Malware Remediation", "DNS/SMTP Troubleshooting", "Wireshark", "Nmap", "Tcpdump"] },
