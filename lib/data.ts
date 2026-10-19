@@ -33,6 +33,12 @@ export const portfolioData = {
             techStack: ["NMAP", "WIRESHARK", "BURP SUITE", "LINUX FUNDAMENTALS"]
         },
         {
+            name: "KUBERNETES GITOPS PIPELINE",
+            status: "Active",
+            description: "This site deploys itself: a push triggers GitHub Actions to build a Docker image and update a manifest repo, and Argo CD syncs it to a k3s cluster with zero-downtime rolling updates, health probes and self-healing.",
+            techStack: ["KUBERNETES", "ARGO CD", "GITHUB ACTIONS", "DOCKER"]
+        },
+        {
             name: "NETWORK IDS & ALERTING PIPELINE",
             status: "WIP",
             description: "Engineered a custom network monitoring solution to detect ping sweeps and brute-force attempts, utilizing n8n to automate alert routing and payload delivery.",
