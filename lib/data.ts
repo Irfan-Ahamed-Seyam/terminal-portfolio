@@ -35,7 +35,7 @@ export const portfolioData = {
         {
             name: "KUBERNETES GITOPS PIPELINE",
             status: "Active",
-            description: "This site deploys itself: a push triggers GitHub Actions to build a Docker image and update a manifest repo, and Argo CD syncs it to a k3s cluster with zero-downtime rolling updates, health probes and self-healing.",
+            description: "A containerized copy of this site is deployed through a GitOps pipeline: a push triggers GitHub Actions to build a Docker image and update a manifest repo, and Argo CD syncs it to a k3s cluster with zero-downtime rolling updates, health probes and self-healing.",
             techStack: ["KUBERNETES", "ARGO CD", "GITHUB ACTIONS", "DOCKER"]
         },
         {
